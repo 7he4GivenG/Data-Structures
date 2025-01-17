@@ -6,6 +6,7 @@ When you implement a function, make sure that you uncomment its provided functio
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 // CONSTANT DECLARATIONS
 #define INITIAL_CAPACITY 2
@@ -81,6 +82,144 @@ void deleteFromTail(List* myList);
 
 void deleteFromPosition(List* myList, int position);
 
+List* initializeList() {
+    List* newList = malloc(sizeof(List));
+    newList->capacity = INITIAL_CAPACITY;
+    newList->size = 0;
+    newList->data = malloc(sizeof(Entry*) * newList->capacity);
+    return newList;
+}
+
+void deleteList(List* myList) {
+    if (myList != NULL) {
+        for (int i = 0; i < myList->size; i++) {
+            freeEntry(myList->data[i]);
+        }
+        free(myList->data);
+        free(myList);
+    }
+}
+
+void doubleCapacity(List* myList) {
+    myList->capacity *= 2;
+    myList->data = realloc(myList->data, sizeof(Entry*) * myList->capacity);
+}
+
+void halveCapacity(List* myList) {
+    myList->capacity /= 2;
+    myList->data = realloc(myList->data, sizeof(Entry*) * myList->capacity);
+}
+
+void insertToHead(List* myList, char* name, char* lastname, float height, int age) {
+    if (myList->size == myList->capacity) {
+        doubleCapacity(myList);
+    }
+    
+    // Shift entries to the right
+    for (int i = myList->size; i > 0; i--) {
+        myList->data[i] = myList->data[i - 1];
+    }
+
+    // Insert the new entry at the head
+    myList->data[0] = initializeEntry(name, lastname, height, age);
+    myList->size++;
+}
+
+void insertToTail(List* myList, char* name, char* lastname, float height, int age) {
+    if (myList->size == myList->capacity) {
+        doubleCapacity(myList);
+    }
+    
+    myList->data[myList->size] = initializeEntry(name, lastname, height, age);
+    myList->size++;
+}
+
+void insertToPosition(List* myList, int position, char* name, char* lastname, float height, int age) {
+    if (position < 0 || position > myList->size) {
+        printf("Invalid position\n");
+        return;
+    }
+    
+    if (myList->size == myList->capacity) {
+        doubleCapacity(myList);
+    }
+    
+    // Shift entries to the right
+    for (int i = myList->size; i > position; i--) {
+        myList->data[i] = myList->data[i - 1];
+    }
+    
+    myList->data[position] = initializeEntry(name, lastname, height, age);
+    myList->size++;
+}
+
+int findPosition(List* myList, char* name) {
+    for (int i = 0; i < myList->size; i++) {
+        if (strcmp(myList->data[i]->name, name) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void deleteFromHead(List* myList) {
+    if (myList->size == 0) {
+        printf("List is empty!\n");
+        return;
+    }
+    
+    freeEntry(myList->data[0]);
+    
+    // Shift entries to the left
+    for (int i = 1; i < myList->size; i++) {
+        myList->data[i - 1] = myList->data[i];
+    }
+    
+    myList->size--;
+    
+    // Halve the capacity if necessary
+    if (myList->size < myList->capacity / 2) {
+        halveCapacity(myList);
+    }
+}
+
+void deleteFromTail(List* myList) {
+    if (myList->size == 0) {
+        printf("List is empty!\n");
+        return;
+    }
+    
+    freeEntry(myList->data[myList->size - 1]);
+    myList->size--;
+    
+    // Halve the capacity if necessary
+    if (myList->size < myList->capacity / 2) {
+        halveCapacity(myList);
+    }
+}
+
+void deleteFromPosition(List* myList, int position) {
+    if (position < 0 || position >= myList->size) {
+        printf("Invalid position\n");
+        return;
+    }
+    
+    freeEntry(myList->data[position]);
+    
+    // Shift entries to the left
+    for (int i = position + 1; i < myList->size; i++) {
+        myList->data[i - 1] = myList->data[i];
+    }
+    
+    myList->size--;
+    
+    // Halve the capacity if necessary
+    if (myList->size < myList->capacity / 2) {
+        halveCapacity(myList);
+    }
+}
+
+
 // Given a pointer to a List struct, this function prints each Entry in that list (NO NEED TO CHANGE).
 void printList(List* myList)
 {
@@ -118,7 +257,7 @@ int main(int argc, char** argv)
 	
 	List* myList;
 	// Uncomment the following function call when you implement the initializeList() function
-	// myList = initializeList(); 
+	myList = initializeList(); 
 	
 	while ((lineSize = getline(&line, &lineBuffSize, fp)) != -1)
 	{
@@ -144,7 +283,7 @@ int main(int argc, char** argv)
 			height = atof(strtok(NULL, delimiter));
 			age = atoi(strtok(NULL, delimiter));
 			// Uncomment the following insertToHead function call when you have implemented it
-			// insertToHead(myList, name, lastname, height, age);
+			insertToHead(myList, name, lastname, height, age);
 		}
 		else if (strcmp(token, "insertToTail") == 0)
 		{
@@ -158,7 +297,7 @@ int main(int argc, char** argv)
 			height = atof(strtok(NULL, delimiter));
 			age = atoi(strtok(NULL, delimiter));
 			// Uncomment the following insertToTail function call when you have implemented it
-			// insertToTail(myList, name, lastname, height, age);
+			insertToTail(myList, name, lastname, height, age);
 		}
 		else if (strcmp(token, "insertToPosition") == 0)
 		{
@@ -174,7 +313,7 @@ int main(int argc, char** argv)
 			height = atof(strtok(NULL, delimiter));
 			age = atoi(strtok(NULL, delimiter));
 			// Uncomment the following insertToPosition function call when you have implemented it
-			// insertToPosition(myList, position, name, lastname, height, age);
+			insertToPosition(myList, position, name, lastname, height, age);
 		}
 		else if (strcmp(token, "findPosition") == 0)
 		{
@@ -182,17 +321,17 @@ int main(int argc, char** argv)
 			
 			name = strtok(NULL, delimiter);
 			// Uncomment the following printf statement using the return value from a findPosition function call when you have implemented the function
-			// printf("%d\n", findPosition(myList, name));
+			printf("%d\n", findPosition(myList, name));
 		}
 		else if (strcmp(token, "deleteFromHead") == 0)
 		{
 			// Uncomment the following deleteFromHead function call when you have implemented it
-			// deleteFromHead(myList);
+			deleteFromHead(myList);
 		}
 		else if (strcmp(token, "deleteFromTail") == 0)
 		{
 			// Uncomment the following insertToHead function call when you have implemented it
-			// deleteFromTail(myList);
+			deleteFromTail(myList);
 		}
 		else if (strcmp(token, "deleteFromPosition") == 0)
 		{
@@ -201,7 +340,7 @@ int main(int argc, char** argv)
 			position = atoi(strtok(NULL, delimiter));
 			
 			// Uncomment the following deleteFromPosition function call when you have implemented it
-			// deleteFromPosition(myList, position);
+			deleteFromPosition(myList, position);
 		}
 		else if (strcmp(token, "printList") == 0)
 		{
@@ -214,7 +353,7 @@ int main(int argc, char** argv)
 		else if (strcmp(token, "deleteList") == 0)
 		{
 			// Uncomment the following deleteList function call when you have implemented it
-			// deleteList(myList);
+			deleteList(myList);
 		}
 		else
 		{

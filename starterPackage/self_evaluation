@@ -1,0 +1,6 @@
+(a) How many hours did you spend on this assignment?
+-   It took me about 11 hours to complete this assingment.
+(b) What did you struggle with the most?
+-   I struggled the most with allocating memory for both the list and each entry using malloc and free.
+(c) What did you learn from this assignment?
+-   I learned how to better handle memory manually and efficient insertion, deletion, and traversal with linked lists and dynamic arrays.
