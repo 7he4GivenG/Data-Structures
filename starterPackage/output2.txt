@@ -1,0 +1,20 @@
+[0]	jonathan	green	1.68	27
+[1]	carolyn	fusch	1.72	21
+[2]	john	brown	1.76	35
+1
+-1
+3
+size:5, capacity:8
+[0]	jonathan	green	1.68	27
+[1]	carolyn	fusch	1.72	21
+[2]	john	brown	1.76	35
+[3]	david	anderssonn	1.75	28
+[4]	sylvia	white	1.81	22
+[0]	carolyn	fusch	1.72	21
+[1]	john	brown	1.76	35
+[2]	david	anderssonn	1.75	28
+[3]	sylvia	white	1.81	22
+[0]	carolyn	fusch	1.72	21
+[1]	david	anderssonn	1.75	28
+size:2, capacity:4
+Invalid command: <weirdCommand>

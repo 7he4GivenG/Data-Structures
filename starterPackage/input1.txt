@@ -1,0 +1,4 @@
+insertToHead john brown 1.76 35 
+insertToHead jonathan green 1.68 27
+printList
+printListInfo

@@ -1,0 +1,19 @@
+insertToHead john brown 1.76 35 
+insertToHead jonathan green 1.68 27
+insertToPosition 1 carolyn fusch 1.72 21
+printList
+findPosition carolyn
+findPosition david
+insertToPosition 3 david anderssonn 1.75 28
+findPosition david
+insertToTail sylvia white 1.81 22
+printListInfo
+printList
+deleteFromHead
+printList
+deleteFromTail
+deleteFromPosition 1
+printList
+printListInfo
+weirdCommand
+deleteList
