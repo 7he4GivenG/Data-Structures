@@ -1,0 +1,46 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\begin{document}
+
+\textbf{Proof:}
+
+According to the Big-O definition, \( f(n) = O(g(n)) \) if there exist constants \( c > 0 \) and \( n_0 \geq 1 \) such that:
+\[
+|f(n)| \leq c \cdot g(n) \quad \text{for all } n \geq n_0.
+\]
+
+Let \( f(n) = 9n^3 - 6n^2 + 8 \) and \( g(n) = n^4 \). To prove \( f(n) = O(n^4) \), we need to show that:
+\[
+|9n^3 - 6n^2 + 8| \leq c \cdot n^4 \quad \text{for sufficiently large } n.
+\]
+
+\section*{Step 1: Factor \( n^4 \) for comparison}
+Divide \( f(n) \) by \( n^4 \):
+\[
+\frac{|9n^3 - 6n^2 + 8|}{n^4} = \frac{9}{n} - \frac{6}{n^2} + \frac{8}{n^4}.
+\]
+
+For sufficiently large \( n \), the terms \( \frac{9}{n} \), \( \frac{6}{n^2} \), and \( \frac{8}{n^4} \) decrease as \( n \) grows.
+
+\section*{Step 2: Find an upper bound}
+Since \( \frac{9}{n}, \frac{6}{n^2}, \) and \( \frac{8}{n^4} \) all approach \( 0 \) as \( n \to \infty \), there exists an \( n_0 \) such that:
+\[
+\frac{9}{n} - \frac{6}{n^2} + \frac{8}{n^4} \leq 1 \quad \text{for } n \geq n_0.
+\]
+
+Thus, we can choose a constant \( c > 0 \) to satisfy the inequality:
+\[
+|9n^3 - 6n^2 + 8| \leq c \cdot n^4.
+\]
+
+\section*{Step 3: Select \( c \) and \( n_0 \)}
+For simplicity, let \( c = 10 \) and \( n_0 = 2 \). Then, for all \( n \geq n_0 \):
+\[
+|9n^3 - 6n^2 + 8| \leq 10 \cdot n^4.
+\]
+
+Thus, \( f(n) = O(n^4) \) is proven. \(\Box\)
+
+\end{document}
