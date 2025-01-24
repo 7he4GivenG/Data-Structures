@@ -4,6 +4,8 @@
 
 \begin{document}
 
+\section*{Question 1:}
+\subsection*{Prove that \( f(n) = 9n^3 - 6n^2 + 8 = O(n^4) \) }
 \textbf{Proof:}
 
 According to the Big-O definition, \( f(n) = O(g(n)) \) if there exist constants \( c > 0 \) and \( n_0 \geq 1 \) such that:
@@ -16,7 +18,7 @@ Let \( f(n) = 9n^3 - 6n^2 + 8 \) and \( g(n) = n^4 \). To prove \( f(n) = O(n^4)
 |9n^3 - 6n^2 + 8| \leq c \cdot n^4 \quad \text{for sufficiently large } n.
 \]
 
-\section*{Step 1: Factor \( n^4 \) for comparison}
+%\section*{Step 1: Factor \( n^4 \) for comparison}
 Divide \( f(n) \) by \( n^4 \):
 \[
 \frac{|9n^3 - 6n^2 + 8|}{n^4} = \frac{9}{n} - \frac{6}{n^2} + \frac{8}{n^4}.
@@ -24,7 +26,7 @@ Divide \( f(n) \) by \( n^4 \):
 
 For sufficiently large \( n \), the terms \( \frac{9}{n} \), \( \frac{6}{n^2} \), and \( \frac{8}{n^4} \) decrease as \( n \) grows.
 
-\section*{Step 2: Find an upper bound}
+%\section*{Step 2: Find an upper bound}
 Since \( \frac{9}{n}, \frac{6}{n^2}, \) and \( \frac{8}{n^4} \) all approach \( 0 \) as \( n \to \infty \), there exists an \( n_0 \) such that:
 \[
 \frac{9}{n} - \frac{6}{n^2} + \frac{8}{n^4} \leq 1 \quad \text{for } n \geq n_0.
@@ -35,12 +37,415 @@ Thus, we can choose a constant \( c > 0 \) to satisfy the inequality:
 |9n^3 - 6n^2 + 8| \leq c \cdot n^4.
 \]
 
-\section*{Step 3: Select \( c \) and \( n_0 \)}
+%\section*{Step 3: Select \( c \) and \( n_0 \)}
 For simplicity, let \( c = 10 \) and \( n_0 = 2 \). Then, for all \( n \geq n_0 \):
 \[
 |9n^3 - 6n^2 + 8| \leq 10 \cdot n^4.
 \]
 
-Thus, \( f(n) = O(n^4) \) is proven. \(\Box\)
+Thus, \( f(n) = O(n^4) \) is proven.
+
+\pagebreak
+\section*{Question 2:}
+\subsection*{Say \( a , b \) are two constants such that \( a \), \( b  > 1\) and \(a < b \). Does there exist an \( a , b \) pair such that \( a^n = \Theta(b^n)\), e.g. \( 5^n = \Theta(9^n)?\) }
+
+\textbf{Solution:}  
+
+By the definition of \( \Theta \)-notation, \( f(n) = \Theta(g(n)) \) if and only if there exist positive constants \( c_1, c_2, \) and \( n_0 \) such that:
+\[
+c_1 \cdot g(n) \leq f(n) \leq c_2 \cdot g(n) \quad \text{for all } n \geq n_0.
+\]
+
+Here, let \( f(n) = a^n \) and \( g(n) = b^n \). To prove whether \( a^n = \Theta(b^n) \), we need to determine if there exist constants \( c_1, c_2 > 0 \) and \( n_0 \geq 1 \) such that:
+\[
+c_1 \cdot b^n \leq a^n \leq c_2 \cdot b^n \quad \text{for all } n \geq n_0.
+\]
+
+%\section*{Step 1: Analyze the ratio \( \frac{a^n}{b^n} \)}
+Simplify \( \frac{a^n}{b^n} \) as follows:
+\[
+\frac{a^n}{b^n} = \left( \frac{a}{b} \right)^n.
+\]
+
+Since \( a < b \), we know that \( \frac{a}{b} < 1 \). Let \( r = \frac{a}{b} \), where \( 0 < r < 1 \). Thus:
+\[
+\frac{a^n}{b^n} = r^n.
+\]
+
+As \( n \to \infty \), \( r^n \to 0 \) because \( 0 < r < 1 \). This means that for sufficiently large \( n \), \( a^n \) becomes arbitrarily smaller than \( b^n \). 
+
+%\section*{Step 2: Check the bounds}
+For \( a^n = \Theta(b^n) \), there must exist constants \( c_1, c_2 > 0 \) such that:
+\[
+c_1 \cdot b^n \leq a^n \quad \text{and} \quad a^n \leq c_2 \cdot b^n \quad \text{for all } n \geq n_0.
+\]
+
+However, as shown above, \( \frac{a^n}{b^n} = r^n \to 0 \) as \( n \to \infty \). This implies that no constant \( c_1 > 0 \) can satisfy \( c_1 \cdot b^n \leq a^n \) for large \( n \). Therefore, \( a^n \neq \Theta(b^n) \).
+
+%\section*{Step 3: Conclusion}
+For any \( a, b > 1 \) with \( a < b \), it is impossible for \( a^n = \Theta(b^n) \) because the exponential decay of \( \left( \frac{a}{b} \right)^n \) ensures that \( a^n \) becomes negligibly small compared to \( b^n \) as \( n \to \infty \).  
+
+%\textbf{Final Answer:}  
+Thus, no such pair \( (a, b) \) exists such that \( a^n = \Theta(b^n) \). \(\Box\)
+\pagebreak
+
+\section*{Question 3:}
+\subsection*{Order the following functions from least to greatest growth rate such that, for any two functions \( f \) and \( g \), if \( f \) comes before \( g \), then \( f(n) = O(g(n)) \): }
+
+\begin{itemize}
+    \item \( f_1(n) = n^n \)
+    \item \( f_2(n) = n^{0.00001} \)
+    \item \( f_3(n) = n^2 \)
+    \item \( f_4(n) = \lg(n) \)
+    \item \( f_5(n) = 2^n \)
+\end{itemize}
+
+We may assume the transitive property: if \( f(n) = O(g(n)) \) and \( g(n) = O(h(n)) \), then \( f(n) = O(h(n)) \). This allows us to prove \( f(n) = O(g(n)) \) only for adjacent functions in the order.
+
+\textbf{Solution:}  
+
+The growth rates of the functions from least to greatest are as follows:  
+\[
+f_4(n) = \lg(n), \quad f_2(n) = n^{0.00001}, \quad f_3(n) = n^2, \quad f_5(n) = 2^n, \quad f_1(n) = n^n.
+\]
+
+\section*{Compare \( f_4(n) = \lg(n) \) and \( f_2(n) = n^{0.00001} \)}  
+We know that logarithmic functions grow slower than any positive power of \( n \). Specifically:
+\[
+\lg(n) = O(n^{0.00001}) \quad \text{and} \quad n^{0.00001} \neq O(\lg(n)).
+\]
+Thus, \( f_4(n) \) comes before \( f_2(n) \).
+
+\section*{Compare \( f_2(n) = n^{0.00001} \) and \( f_3(n) = n^2 \)}  
+Since \( n^{0.00001} \) is a smaller power of \( n \) than \( n^2 \), we have:
+\[
+n^{0.00001} = O(n^2) \quad \text{and} \quad n^2 \neq O(n^{0.00001}).
+\]
+Thus, \( f_2(n) \) comes before \( f_3(n) \).
+
+\section*{Compare \( f_3(n) = n^2 \) and \( f_5(n) = 2^n \)}  
+Exponential functions grow faster than any polynomial function. Specifically:
+\[
+n^2 = O(2^n) \quad \text{and} \quad 2^n \neq O(n^2).
+\]
+Thus, \( f_3(n) \) comes before \( f_5(n) \).
+
+\section*{Compare \( f_5(n) = 2^n \) and \( f_1(n) = n^n \)}  
+The function \( n^n \) grows faster than \( 2^n \) because:
+\[
+n^n = n \cdot n \cdot n \cdots \text{(n times)} \quad \text{and for large } n, \quad n^n \gg 2^n.
+\]
+Thus:
+\[
+2^n = O(n^n) \quad \text{and} \quad n^n \neq O(2^n).
+\]
+Thus, \( f_5(n) \) comes before \( f_1(n) \).
+
+%\section*{Conclusion}  
+The final order from least to greatest growth rate is:
+\[
+f_4(n) = \lg(n), \quad f_2(n) = n^{0.00001}, \quad f_3(n) = n^2, \quad f_5(n) = 2^n, \quad f_1(n) = n^n.
+\]
+\(\Box\)
+
+\pagebreak
+
+\section*{Question 4:}
+\subsection*{Solve the following problems for the given code snippets}
+
+\begin{itemize}
+    \item \textbf{(a) foo1: Use summations}
+    \item \textbf{(b) foo2: Use a recurrence}
+\end{itemize}
+
+\section*{Part (a): foo1 - Using Summations}
+
+% \textbf{Code:}
+% \begin{verbatim}
+% Function foo1(L, n):
+% /* L is a list of n integers, starting at index 1 */
+% 2 \(a := 1
+% 3 while \(a ≤ n do
+% 4   \(b := a 
+% 5   x := 0 
+% 6   while b $\le$ n do 
+% 7     x := x + L[b] 
+% 8     b := b + 1 
+% 9   L[a] := x 
+% 10  a := a + 1 
+% 11 return L
+% \end{verbatim}
+
+\textbf{Step 1: Write a summation for the runtime.}
+
+The outer \texttt{while} loop runs \( n \) times (from \( a = 1 \) to \( a = n \)).  
+The inner \texttt{while} loop starts at \( b = a \) and runs \( n - a + 1 \) times for each iteration of the outer loop.  
+The total runtime is represented by the summation:
+\[
+T(n) = \sum_{a=1}^{n} \sum_{b=a}^{n} C,
+\]
+where \( C \) is the constant runtime of operations inside the loops.
+
+\textbf{Step 2: Simplify the summation.}
+
+\[
+T(n) = \sum_{a=1}^{n} \sum_{b=a}^{n} C = C \sum_{a=1}^{n} \left( n - a + 1 \right).
+\]
+Simplify \( \sum_{a=1}^{n} (n - a + 1) \):
+\[
+\sum_{a=1}^{n} (n - a + 1) = \sum_{a=1}^{n} n - \sum_{a=1}^{n} a + \sum_{a=1}^{n} 1.
+\]
+Using known summation formulas:
+\[
+\sum_{a=1}^{n} n = n^2, \quad \sum_{a=1}^{n} a = \frac{n(n+1)}{2}, \quad \sum_{a=1}^{n} 1 = n.
+\]
+Substitute:
+\[
+\sum_{a=1}^{n} (n - a + 1) = n^2 - \frac{n(n+1)}{2} + n.
+\]
+Simplify:
+\[
+\sum_{a=1}^{n} (n - a + 1) = \frac{n^2 + n}{2}.
+\]
+Thus:
+\[
+T(n) = C \cdot \frac{n^2 + n}{2}.
+\]
+
+\textbf{Step 3: Tight bound.}
+
+The runtime \( T(n) \) simplifies to:
+\[
+T(n) = \Theta(n^2).
+\]
+
+\section*{Part (b): foo2 - Using a Recurrence}
+
+% \textbf{Code:}
+% \begin{verbatim}
+% Function foo2(n):
+% /* n is a positive integer */
+% 2 if n = 0 then
+% 3   return 0 
+% 4 x := 0
+% 5 for i := 1 to n do
+% 6   x := x + i 
+% 7 return foo2(n − 1) + x
+% \end{verbatim}
+
+\textbf{Step 1: Write the recurrence relation.}
+
+The base case is:
+\[
+T(0) = C, \quad \text{where \( C \) represents the constant runtime of the base case.}
+\]
+The recursive case is:
+\[
+T(n) = T(n-1) + \sum_{i=1}^{n} C,
+\]
+where \( C \) is the constant runtime of the operations inside the loop.
+
+Simplify the summation:
+\[
+\sum_{i=1}^{n} C = C \cdot \frac{n(n+1)}{2}.
+\]
+Thus, the recurrence becomes:
+\[
+T(n) = T(n-1) + C \cdot \frac{n(n+1)}{2}.
+\]
+
+\textbf{Step 2: Solve the recurrence using the substitution method.}
+
+Expand the recurrence:
+\[
+T(n) = T(n-1) + C \cdot \frac{n(n+1)}{2}.
+\]
+\[
+T(n) = T(n-2) + C \cdot \frac{(n-1)n}{2} + C \cdot \frac{n(n+1)}{2}.
+\]
+Continue expanding until the base case:
+\[
+T(n) = T(0) + \sum_{k=1}^{n} C \cdot \frac{k(k+1)}{2}.
+\]
+Substitute \( T(0) = C \):
+\[
+T(n) = C + C \cdot \sum_{k=1}^{n} \frac{k(k+1)}{2}.
+\]
+Simplify the summation:
+\[
+\sum_{k=1}^{n} \frac{k(k+1)}{2} = \frac{1}{2} \sum_{k=1}^{n} (k^2 + k).
+\]
+Use summation formulas:
+\[
+\sum_{k=1}^{n} k^2 = \frac{n(n+1)(2n+1)}{6}, \quad \sum_{k=1}^{n} k = \frac{n(n+1)}{2}.
+\]
+Substitute:
+\[
+\sum_{k=1}^{n} \frac{k(k+1)}{2} = \frac{1}{2} \left( \frac{n(n+1)(2n+1)}{6} + \frac{n(n+1)}{2} \right).
+\]
+Simplify:
+\[
+\sum_{k=1}^{n} \frac{k(k+1)}{2} = \frac{n(n+1)}{12} \left( 2n+1 + 6 \right) = \frac{n(n+1)(2n+7)}{12}.
+\]
+Thus:
+\[
+T(n) = C + C \cdot \frac{n(n+1)(2n+7)}{12}.
+\]
+
+\textbf{Step 3: Tight bound.}
+
+The leading term of \( T(n) \) is \( \frac{C \cdot 2n^3}{12} \), so:
+\[
+T(n) = \Theta(n^3).
+\]
+\pagebreak
+\section*{Question 5:}
+\subsection*{Part (a): Explanation of \texttt{mystery}}
+
+The algorithm \texttt{mystery} implements a sorting algorithm that works as follows:
+1. It repeatedly identifies the largest element in the unsorted portion of the list.
+2. Once the largest element is identified, it is swapped with the last element of the unsorted portion.
+3. The unsorted portion of the list shrinks by one element after each iteration, and this process repeats until the entire list is sorted.
+
+At a high level, this algorithm is similar to \textbf{selection sort}. It works by iteratively selecting the largest remaining element and placing it in its correct position, starting from the end of the list and working backward.
+
+\textbf{How it works:}
+- The outer \texttt{while} loop (lines 7–13) iterates from the end of the list (\( i = n - 1 \)) to the start (\( i = 1 \)).
+- The inner \texttt{for} loop (lines 9–11) scans the unsorted portion of the list (indices \( 0 \) to \( i \)) to find the index of the largest element (\( x \)).
+- Once the largest element is identified, the \texttt{helper} function swaps it with the element at index \( i \).
+- This ensures that the largest unsorted element is moved to its correct position, reducing the unsorted portion by one element in each iteration.
+
+\subsection*{Part (b): Performance Analysis}
+
+\textbf{Step 1: Runtime Analysis of \texttt{mystery}}
+
+The runtime of the algorithm depends on the number of iterations in the outer and inner loops:
+- The outer \texttt{while} loop runs \( n - 1 \) times (from \( i = n - 1 \) to \( i = 1 \)).
+- The inner \texttt{for} loop runs \( i + 1 \) times for each value of \( i \) (from \( j = 0 \) to \( j = i \)).
+
+The total number of comparisons made by the inner loop across all iterations is:
+\[
+\sum_{i=1}^{n-1} (i + 1) = \sum_{i=1}^{n-1} i + \sum_{i=1}^{n-1} 1 = \frac{(n-1)n}{2} + (n-1) = \frac{n^2 - n}{2} + (n-1).
+\]
+Simplifying:
+\[
+\text{Total comparisons} = \frac{n^2 + n - 2}{2}.
+\]
+
+The runtime of the \texttt{helper} function is constant (\( O(1) \)), so the runtime of \texttt{mystery} is determined by the number of comparisons. Thus:
+\[
+T(n) = \Theta(n^2).
+\]
+
+\textbf{Step 2: Best and Worst Cases}
+
+- \textbf{Best Case:} Even if the input list is already sorted, the algorithm will still perform all comparisons in the inner loop and all swaps in the outer loop. Therefore, the best-case runtime is:
+\[
+T_{\text{best}}(n) = \Theta(n^2).
+\]
+
+- \textbf{Worst Case:} The runtime for the worst case (e.g., the list is sorted in reverse order) is also:
+\[
+T_{\text{worst}}(n) = \Theta(n^2).
+\]
+
+Thus, the algorithm has the same runtime for both the best and worst cases.
+
+\textbf{Step 3: Can the Algorithm Be Tweaked for Faster Best-Case Runtime?}
+
+To achieve asymptotically faster best-case performance, the algorithm must detect when the input list is already sorted. One possible tweak is:
+- Add a flag to check if any swaps occurred during the current iteration of the \texttt{while} loop. If no swaps occurred, the algorithm terminates early, as the list is already sorted.
+
+With this modification:
+- The best-case runtime becomes \( O(n) \), as the algorithm will detect a sorted list after one pass through the inner loop.
+- The worst-case runtime remains \( \Theta(n^2) \), as all comparisons and swaps are still required in the general case.
+
+\textbf{Conclusion:}
+- The original algorithm has the same asymptotic runtime (\( \Theta(n^2) \)) for both the best and worst cases.
+- A modification with an early exit condition can reduce the best-case runtime to \( O(n) \), while maintaining \( \Theta(n^2) \) runtime in the worst case.
+
+\pagebreak
+\section*{Question 6:}
+\subsection*{Trimerge Sort: Analysis}
+
+% \textbf{Problem:} Analyze trimerge sort and answer the following questions:
+
+% \begin{enumerate}[label=(\alph*)]
+%     \item Explain exactly how many comparisons trimerge sort’s merge will make to merge three subarrays of size \( n/3 \).
+%     \item Use the recursion tree method to compute a tight bound on the runtime of trimerge sort.
+%     \item Prove or disprove: Trimerge sort is asymptotically faster than merge sort.
+% \end{enumerate}
+
+\subsection*{Part (a): Number of Comparisons in the Merge Step}
+
+In merge sort, merging two subarrays of size \( n/2 \) takes \( n - 1 \) comparisons because the merge step compares elements pairwise until all elements from both subarrays are placed in the sorted array.
+
+For trimerge sort, the merge subroutine merges three sorted subarrays of size \( n/3 \). The merging process can be described as follows:
+- At each step, the smallest of the three current elements (one from each subarray) is selected and placed into the sorted array.
+- The process repeats until all \( n \) elements are merged.
+
+Since \( n \) elements are placed into the sorted array, there are \( n - 1 \) comparisons made across all elements during the merging process. This result arises because the merging process stops after the last element is added, requiring \( n - 1 \) comparisons to resolve all relative orderings.
+
+\textbf{Conclusion:} The trimerge step makes \( n - 1 \) comparisons to merge three subarrays of size \( n/3 \).
+
+\subsection*{Part (b): Tight Bound on Runtime Using the Recursion Tree Method}
+
+\textbf{Trimerge Sort Recurrence:}
+
+The recurrence for trimerge sort is:
+\[
+T(n) = 3T\left(\frac{n}{3}\right) + \Theta(n),
+\]
+where:
+- \( 3T\left(\frac{n}{3}\right) \): The cost of recursively sorting three subarrays of size \( n/3 \).
+- \( \Theta(n) \): The cost of merging three subarrays of size \( n/3 \).
+
+\textbf{Step 1: Value inside interior nodes.}
+
+At each level of the recursion tree, the cost of merging subarrays is \( \Theta(n) \). Since there are three recursive calls per node, the total work at a given level of the tree is:
+\[
+\text{Work per level} = \Theta(n).
+\]
+
+\textbf{Step 2: Value inside leaf nodes.}
+
+The recursion stops when the size of the subarray is less than 3. At this point, the cost is constant (\( \Theta(1) \)).
+
+\textbf{Step 3: Number of child nodes per node.}
+
+Each node has 3 child nodes because the array is split into three parts at each step.
+
+\textbf{Step 4: Height of the recursion tree.}
+
+At each recursive step, the input size is divided by 3. The height of the recursion tree is:
+\[
+h = \log_3(n).
+\]
+
+\textbf{Step 5: Total work.}
+
+The total work is the sum of the work across all levels of the tree. Since there are \( \log_3(n) \) levels and the work at each level is \( \Theta(n) \), the total work is:
+\[
+T(n) = \Theta(n) \cdot \log_3(n).
+\]
+
+\textbf{Conclusion:} The runtime of trimerge sort is \( T(n) = \Theta(n \log_3(n)) \).
+
+\subsection*{Part (c): Is Trimerge Sort Asymptotically Faster Than Merge Sort?}
+
+The runtime of merge sort is \( \Theta(n \log_2(n)) \), while the runtime of trimerge sort is \( \Theta(n \log_3(n)) \).
+
+The logarithmic base change formula states that:
+\[
+\log_3(n) = \frac{\log_2(n)}{\log_2(3)}.
+\]
+Thus:
+\[
+n \log_3(n) = n \cdot \frac{\log_2(n)}{\log_2(3)}.
+\]
+
+Since \( \log_2(3) > 1 \), the runtime of trimerge sort is larger than that of merge sort for sufficiently large \( n \). Therefore, trimerge sort is \textbf{not} asymptotically faster than merge sort.
+
+\textbf{Conclusion:} Trimerge sort is not asymptotically faster than merge sort.
 
 \end{document}
