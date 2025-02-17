@@ -1,68 +1,34 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #define BUFSIZE 256
 
 typedef struct hashItem {
-    char *value;
+    char value[45];
     struct hashItem *next;
 } HashItem;
 
 typedef struct hashTable {
     int capacity;
-    int size;
     HashItem **data;
 } HashTable;
 
-HashItem* initializeItem(char *value);
-HashTable* initializeTable(int capacity);
-int hash(char *value);
-void insertToTable(char *wrd, HashTable *table);
-int findValue(HashTable *table, char *value);
-void isInvertedAdjacent(HashTable* table, char* value);
-void isMissingLetter(HashTable* table, char* value);
-void isExtraLetter(HashTable* table, char* value);
-void suggestAlternatives(HashTable* table, char* value);
-void freeHashTable(HashTable *table);
-void freeItem(HashItem* item);
-
-HashItem* initializeItem(char *value) {
-    HashItem *item = malloc(sizeof(HashItem));
-    if (!item) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(1);
-    }
-    item->value = malloc(strlen(value) + 1);
-    if (!item->value) {
-        fprintf(stderr, "Memory allocation for value failed\n");
-        free(item);  // Free the item as well
-        exit(1);
-    }
-    strcpy(item->value, value);
-    item->next = NULL;
-    return item;
+HashItem* initializeItem(const char* value) {
+    HashItem* newItem = (HashItem*)malloc(sizeof(HashItem));
+    strcpy(newItem->value, value);
+    newItem->next = NULL;
+    return newItem;
 }
 
 HashTable* initializeTable(int capacity) {
-    HashTable *table = malloc(sizeof(HashTable));
-    if (!table) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(1);
-    }
-    table->capacity = capacity;
-    table->size = 0;
-    table->data = calloc(capacity, sizeof(HashItem*));
-    if (!table->data) {
-        fprintf(stderr, "Memory allocation failed\n");
-        free(table); // Free table before exiting
-        exit(1);
-    }    
-    return table;
+    HashTable* newTable = (HashTable*)malloc(sizeof(HashTable));
+    newTable->capacity = capacity;
+    newTable->data = (HashItem**)malloc(capacity * sizeof(HashItem*));
+    return newTable;
 }
 
-int hash(char *value) {
+unsigned int hash(const char* value) {
     unsigned int h = 0;
     while (*value) {
         h = 31 * h + (unsigned char)(*value++);
@@ -77,7 +43,7 @@ void insertToTable(char *wrd, HashTable *table) {
     table->data[index] = newItem;
 }
 
-int findValue(HashTable *table, char *value) {
+int findValue(HashTable *table, const char* value) {
     unsigned int index = hash(value) % table->capacity;
     HashItem* current = table->data[index];
     while (current != NULL) {
@@ -129,20 +95,13 @@ void suggestAlternatives(HashTable* table, char* value) {
     printf("\n");
 }
 
-void freeItem(HashItem* item) {
-    if (item) {
-        free(item->value);
-        free(item);
-    }
-}
-
 void freeHashTable(HashTable *table) {
     for (int i = 0; i < table->capacity; i++) {
         HashItem* current = table->data[i];
         while (current != NULL) {
             HashItem* temp = current;
             current = current->next;
-            freeItem(temp);
+            free(temp);
         }
     }
     free(table->data);
