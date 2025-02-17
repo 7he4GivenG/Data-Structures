@@ -2,15 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <stdbool.h>
 
 #define BUFSIZE 256
-#define MAX_WORDS 10000  // Adjust based on your dictionary size
-#define MAX_WORD_LENGTH 50
-#define MAX_SUGGESTIONS 100
 
 typedef struct hashItem {
-    int key;
     char *value;
     struct hashItem *next;
 } HashItem;
@@ -21,29 +16,31 @@ typedef struct hashTable {
     HashItem **data;
 } HashTable;
 
-HashItem* initializeItem(int key, char *value);
+HashItem* initializeItem(char *value);
 HashTable* initializeTable(int capacity);
 int hash(char *value, int capacity);
-bool searchT(HashTable *table, int key, char *value);
 void insertToTable(char *wrd, HashTable *table);
-bool is_inverted_adjacent(const char *input, const char *dict_word);
-int is_missing_letter(const char *word, const char *dict_word);
-int is_extra_letter(const char *word, const char *dict_word);
-char* find_suggestions(HashTable *table, const char *input);
+int findValue(HashTable *table, char *value);
+void isInvertedAdjacent(HashTable* table, char* value);
+void isMissingLetter(HashTable* table, char* value);
+void isExtraLetter(HashTable* table, char* value);
+void suggestAlternatives(HashTable* table, char* value);
+void freeHashTable(HashTable *table);
+void freeItem(HashItem* item);
 
-HashItem* initializeItem(int key, char *value) {
+HashItem* initializeItem(char *value) {
     HashItem *item = malloc(sizeof(HashItem));
     if (!item) {
         fprintf(stderr, "Memory allocation failed\n");
         exit(1);
     }
-    item->key = key;
-    item->value = malloc(strlen(value) + 1); // Allocate memory for the string
+    item->value = malloc(strlen(value) + 1);
     if (!item->value) {
         fprintf(stderr, "Memory allocation for value failed\n");
+        free(item);  // Free the item as well
         exit(1);
     }
-    strcpy(item->value, value);  // Copy the value string
+    strcpy(item->value, value);
     item->next = NULL;
     return item;
 }
@@ -56,7 +53,12 @@ HashTable* initializeTable(int capacity) {
     }
     table->capacity = capacity;
     table->size = 0;
-    table->data = calloc(capacity, sizeof(HashItem*)); // Properly initialize to NULL
+    table->data = calloc(capacity, sizeof(HashItem*));
+    if (!table->data) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(table); // Free table before exiting
+        exit(1);
+    }    
     return table;
 }
 
@@ -68,100 +70,110 @@ int hash(char *value, int capacity) {
         value++;
         pow *= 31;
     }
-
     return h % capacity;
-}
-
-bool searchT(HashTable *table, int key, char *value) {
-    HashItem *array = table->data[key];
-    //printf("%s", array->value);
-    while (array != NULL) {
-        //printf("%s\n", array->value);
-        if(strcmp(array->value, value) == 0) {
-            return true;
-        } else {
-            array = array->next;
-        }
-    }
-    return false;
 }
 
 void insertToTable(char *wrd, HashTable *table) {
     int index = hash(wrd, table->capacity);
-        HashItem *newItem = initializeItem(index, wrd);
-        
-        if (table->data[index] == NULL) {
-            table->data[index] = newItem;
-        } else {
-            HashItem *tableItem = table->data[index];
-            while (tableItem->next != NULL) {
-                tableItem = tableItem->next;
-            }
+    HashItem *newItem = initializeItem(wrd);
+    if (table->data[index] == NULL) {
+        table->data[index] = newItem;
+    } else {
+        HashItem *tableItem = table->data[index];
+        while (tableItem->next != NULL) {
+            tableItem = tableItem->next;
+        }
         tableItem->next = newItem;
     }
 }
 
-bool is_inverted_adjacent(const char *input, const char *dict_word) {
-    int len = strlen(input);
-    if (strlen(dict_word) != len) return false; // Must be same length
-
-    for (int i = 0; i < len - 1; i++) {
-        if (input[i] == dict_word[i + 1] && input[i + 1] == dict_word[i]) {
-            if (strncmp(input, dict_word, i) == 0 && strcmp(input + i + 2, dict_word + i + 2) == 0) {
-                return true;
-            }
+int findValue(HashTable *table, char *value) {
+    int key = hash(value, table->capacity);
+    HashItem *array = table->data[key];
+    while (array != NULL) {
+        if (strcmp(array->value, value) == 0) {
+            return 1;
         }
+        array = array->next;
     }
-    return false;
+    return 0;
 }
 
-// Check if input is missing exactly one letter compared to dict_word
-bool is_missing_one_letter(const char *input, const char *dict_word) {
-    int len1 = strlen(input), len2 = strlen(dict_word);
-    if (len1 + 1 != len2) return false; // Must be missing exactly one letter
-
-    for (int i = 0; i < len2; i++) {
-        if (strncmp(input, dict_word, i) == 0 && strcmp(input + i, dict_word + i + 1) == 0) {
-            return true;
+void isInvertedAdjacent(HashTable* table, char* value) {
+    int length = strlen(value);
+    char alternative[50];
+    strcpy(alternative, value);
+    for (int i = 0; i < length - 1; i++) {
+        char temp = alternative[i];
+        alternative[i] = alternative[i + 1];
+        alternative[i + 1] = temp;
+        if (findValue(table, alternative)) {
+            printf("%s ", alternative);
         }
+        temp = alternative[i];
+        alternative[i] = alternative[i + 1];
+        alternative[i + 1] = temp;
     }
-    return false;
 }
 
-// Check if input has one extra letter compared to dict_word
-bool is_extra_one_letter(const char *input, const char *dict_word) {
-    int len1 = strlen(input), len2 = strlen(dict_word);
-    if (len1 - 1 != len2) return false; // Must have exactly one extra letter
-
-    for (int i = 0; i < len1; i++) {
-        if (strncmp(input, dict_word, i) == 0 && strcmp(input + i + 1, dict_word + i) == 0) {
-            return true;
+void isMissingLetter(HashTable* table, char* value) {
+    char alternative[50];
+    for (char c = 'a'; c <= 'z'; c++) {
+        snprintf(alternative, sizeof(alternative), "%c%s", c, value);
+        if (findValue(table, alternative)) {
+            printf("%s ", alternative);
+        }
+        snprintf(alternative, sizeof(alternative), "%s%c", value, c);
+        if (findValue(table, alternative)) {
+            printf("%s ", alternative);
         }
     }
-    return false;
 }
 
-// Suggest words based on one single error type
-char* find_suggestions(HashTable *table, const char *input) {
-    char *suggestions = malloc(MAX_SUGGESTIONS * 256);  // Allocate enough space
-    if (!suggestions) return NULL;
-    suggestions[0] = '\0';
-    
+void isExtraLetter(HashTable* table, char* value) {
+    char alternative[50];
+    strcpy(alternative, value + 1);
+
+    if (findValue(table, alternative)) {
+        printf("%s ", alternative);
+    }
+
+    strcpy(alternative, value);
+    int length = strlen(value);
+    alternative[length - 1] = '\0';
+
+    if (findValue(table, alternative)) {
+        printf("%s ", alternative);
+    }
+}
+
+void suggestAlternatives(HashTable* table, char* value) {
+    printf("Suggestions: ");
+    isInvertedAdjacent(table, value);
+    isMissingLetter(table, value);
+    isExtraLetter(table, value);
+    printf("\n");
+}
+
+void freeItem(HashItem* item) {
+    if (item) {
+        free(item->value);
+        free(item);
+    }
+}
+
+void freeHashTable(HashTable *table) {
     for (int i = 0; i < table->capacity; i++) {
-        HashItem *current = table->data[i];
-        while (current) {
-            if (is_inverted_adjacent(input, current->value) ||
-                is_missing_one_letter(input, current->value) ||
-                is_extra_one_letter(input, current->value)) {
-                strcat(suggestions, current->value);
-                strcat(suggestions, " ");
-            }
+        HashItem* current = table->data[i];
+        while (current != NULL) {
+            HashItem* temp = current;
             current = current->next;
+            freeItem(temp);
         }
     }
-    return suggestions;
+    free(table->data);
+    free(table);
 }
-
 
 int main(int argc, char **argv)
 {
@@ -206,12 +218,8 @@ int main(int argc, char **argv)
     fseek(fp, 0, SEEK_SET);
 
     char wrd[BUFSIZE];
-    for (int i = 0; i < numOfWords; i++)
-    {
-        fscanf(fp, "%s \n", wrd);
-        //You can print the words for Debug purposes, just to make sure you are loading the dictionary as intended
-        //printf("%d: %s\n",i,wrd);
-        //HINT: here is a good place to insert the words into your hash table
+    while (fgets(wrd, BUFSIZE, fp) != NULL) {
+        wrd[strcspn(wrd, "\n")] = '\0'; // Remove newline character
         insertToTable(wrd, table);
     }
     fclose(fp);
@@ -239,34 +247,20 @@ int main(int argc, char **argv)
 
 		//split the buffer by delimiters to read a single word
 		word = strtok(line,delimiter); 
-		//printf("Word: %s, Key: %d\n", word, hash(word, table->capacity));
-        //printf("Word: %s, Key: %d\n", "hello", hash("hello", table->capacity));
-        //printf("Word: %s, Key: %d\n", "zwitterionic", hash("hello", table->capacity));
-		//read the line word by word
-		while(word!=NULL)
-		{
+		while(word!=NULL) {
             // You can print the words of the inpit file for Debug purposes, just to make sure you are loading the input text as intended
 			//printf("%s\n",word);
 
-            
             // HINT: Since this nested while loop will keep reading the input text word by word, here is a good place to check for misspelled words
             int key = hash(word, table->capacity);
-            if (!searchT(table, key, word)) {
+            if (!findValue(table, word)) {
                 noTypo = 0;
                 printf("Misspelled word: %s\n",word);
                 if (insertToDictionary == 1) {
                     insertToTable(word, table);
                 }
-                printf("Suggestions: %s\n", find_suggestions(table, word));
+                suggestAlternatives(table, word);
             }
-            
-            // INPUT/OUTPUT SPECS: use the following line for printing a "word" that is misspelled.
-            //printf("Misspelled word: %s\n",word);
-            
-            // INPUT/OUTPUT SPECS: use the following line for printing suggestions, each of which will be separated by a comma and whitespace.
-            //printf("Suggestions: "); //the suggested words should follow
-            
-            
             
 			word = strtok(NULL,delimiter); 
 		}
@@ -277,8 +271,9 @@ int main(int argc, char **argv)
     if(noTypo==1)
         printf("No typo!\n");
     
-
     // DON'T FORGET to free the memory that you allocated
-    
+    free(line);
+    freeHashTable(table);
+
 	return 0;
 }
