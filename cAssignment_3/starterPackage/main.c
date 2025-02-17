@@ -99,7 +99,8 @@ int findValue(HashTable *table, char *value) {
     return 0;
 }
 
-void isInvertedAdjacent(HashTable* table, char* value) {
+void suggestAlternatives(HashTable* table, char* value) {
+    printf("Suggestions: ");
     int length = strlen(value);
     char alternative[50];
     strcpy(alternative, value);
@@ -114,44 +115,27 @@ void isInvertedAdjacent(HashTable* table, char* value) {
         alternative[i] = alternative[i + 1];
         alternative[i + 1] = temp;
     }
-}
-
-void isMissingLetter(HashTable* table, char* value) {
-    char alternative[50];
     for (char c = 'a'; c <= 'z'; c++) {
         snprintf(alternative, sizeof(alternative), "%c%s", c, value);
         if (findValue(table, alternative)) {
             printf("%s ", alternative);
         }
+    }
+    for (char c = 'a'; c <= 'z'; c++) {
         snprintf(alternative, sizeof(alternative), "%s%c", value, c);
         if (findValue(table, alternative)) {
             printf("%s ", alternative);
         }
     }
-}
-
-void isExtraLetter(HashTable* table, char* value) {
-    char alternative[50];
     strcpy(alternative, value + 1);
-
     if (findValue(table, alternative)) {
         printf("%s ", alternative);
     }
-
     strcpy(alternative, value);
-    int length = strlen(value);
     alternative[length - 1] = '\0';
-
     if (findValue(table, alternative)) {
         printf("%s ", alternative);
     }
-}
-
-void suggestAlternatives(HashTable* table, char* value) {
-    printf("Suggestions: ");
-    isInvertedAdjacent(table, value);
-    isMissingLetter(table, value);
-    isExtraLetter(table, value);
     printf("\n");
 }
 
