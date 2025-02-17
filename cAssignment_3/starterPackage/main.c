@@ -18,7 +18,7 @@ typedef struct hashTable {
 
 HashItem* initializeItem(char *value);
 HashTable* initializeTable(int capacity);
-int hash(char *value, int capacity);
+int hash(char *value);
 void insertToTable(char *wrd, HashTable *table);
 int findValue(HashTable *table, char *value);
 void isInvertedAdjacent(HashTable* table, char* value);
@@ -62,39 +62,29 @@ HashTable* initializeTable(int capacity) {
     return table;
 }
 
-int hash(char *value, int capacity) {
-    __uintmax_t h = 0;
-    __uintmax_t pow = 1;
-    while (*value != '\0') {
-        h += (*value * pow) % capacity;
-        value++;
-        pow *= 31;
+int hash(char *value) {
+    unsigned int h = 0;
+    while (*value) {
+        h = 31 * h + (unsigned char)(*value++);
     }
-    return h % capacity;
+    return h;
 }
 
 void insertToTable(char *wrd, HashTable *table) {
-    int index = hash(wrd, table->capacity);
-    HashItem *newItem = initializeItem(wrd);
-    if (table->data[index] == NULL) {
-        table->data[index] = newItem;
-    } else {
-        HashItem *tableItem = table->data[index];
-        while (tableItem->next != NULL) {
-            tableItem = tableItem->next;
-        }
-        tableItem->next = newItem;
-    }
+    unsigned int index = hash(wrd) % table->capacity;
+    HashItem* newItem = initializeItem(wrd);
+    newItem->next = table->data[index];
+    table->data[index] = newItem;
 }
 
 int findValue(HashTable *table, char *value) {
-    int key = hash(value, table->capacity);
-    HashItem *array = table->data[key];
-    while (array != NULL) {
-        if (strcmp(array->value, value) == 0) {
+    unsigned int index = hash(value) % table->capacity;
+    HashItem* current = table->data[index];
+    while (current != NULL) {
+        if (strcmp(current->value, value) == 0) {
             return 1;
         }
-        array = array->next;
+        current = current->next;
     }
     return 0;
 }
@@ -202,8 +192,8 @@ int main(int argc, char **argv)
     fseek(fp, 0, SEEK_SET);
 
     char wrd[BUFSIZE];
-    while (fgets(wrd, BUFSIZE, fp) != NULL) {
-        wrd[strcspn(wrd, "\n")] = '\0'; // Remove newline character
+    for (int i = 0; i < numOfWords; i++) {
+        fscanf(fp, "%s \n", wrd);
         insertToTable(wrd, table);
     }
     fclose(fp);
@@ -236,28 +226,26 @@ int main(int argc, char **argv)
 			//printf("%s\n",word);
 
             // HINT: Since this nested while loop will keep reading the input text word by word, here is a good place to check for misspelled words
-            int key = hash(word, table->capacity);
             if (!findValue(table, word)) {
+                printf("Misspelled word: %s\n", word);
+                suggestAlternatives(table, word);
                 noTypo = 0;
-                printf("Misspelled word: %s\n",word);
                 if (insertToDictionary == 1) {
                     insertToTable(word, table);
                 }
-                suggestAlternatives(table, word);
             }
-            
-			word = strtok(NULL,delimiter); 
-		}
-	}
+            word = strtok(NULL, delimiter);
+        }
+    }
 	fclose(fp);
     
     //HINT: If the flag noTypo is not altered (which you should do in the loop above if there exists a word not in the dictionary), then you should print "No typo!"
-    if(noTypo==1)
+    if (noTypo == 1) {
         printf("No typo!\n");
+    }
     
     // DON'T FORGET to free the memory that you allocated
-    free(line);
     freeHashTable(table);
-
-	return 0;
+    free(line);
+    return 0;
 }
